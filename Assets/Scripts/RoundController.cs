@@ -42,7 +42,9 @@ public class RoundController : MonoBehaviour {
 				c.enabled = true;
 				longestWaitTime = Mathf.Max (longestWaitTime, c.Duration);
 			}
+			Debug.Log (longestWaitTime);
 			yield return new WaitForSeconds(longestWaitTime);
+			round.SetActive(false);
 		}
 	}
 }

@@ -15,7 +15,7 @@ public class MoveOnAxis : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(_t < Duration) {
-			transform.position += Time.deltaTime * Speed * transform.up;
+			transform.position += Time.deltaTime * Speed * transform.forward;
 			_t += Time.deltaTime;
 		} else {
 			this.enabled = false;

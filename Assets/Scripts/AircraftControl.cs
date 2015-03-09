@@ -10,7 +10,7 @@ public class AircraftControl : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+		Screen.lockCursor = true;
 	}
 	
 	// Update is called once per frame
@@ -19,33 +19,27 @@ public class AircraftControl : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		if(Input.GetKey (KeyCode.D)) {
-			rigidbody.AddTorque(transform.up * YawTorque);
-		} else if(Input.GetKey (KeyCode.A)) {
-			rigidbody.AddTorque(-transform.up * YawTorque);
-		}
-
 		if(Input.GetKey (KeyCode.Q)) {
 			rigidbody.AddTorque(transform.forward * RollTorque);
 		} else if(Input.GetKey (KeyCode.E)) {
 			rigidbody.AddTorque(-transform.forward * RollTorque);
 		}
 
-		if(Input.GetKey (KeyCode.W)) {
-			rigidbody.AddTorque(transform.right * PitchTorque);
-		} else if(Input.GetKey (KeyCode.S)) {
-			rigidbody.AddTorque(-transform.right * PitchTorque);
-		}
+//		rigidbody.AddTorque(transform.right * PitchTorque * Input.GetAxis("Mouse Y"));
+		transform.Rotate(Vector3.right, Input.GetAxis ("Mouse Y"), Space.Self);
 
-		if(Input.GetKey (KeyCode.UpArrow)) {
+//		rigidbody.AddTorque(-transform.up * YawTorque * Input.GetAxis("Mouse X"));
+		transform.Rotate(Vector3.up, Input.GetAxis ("Mouse X"), Space.Self);
+
+		if(Input.GetKey (KeyCode.W)) {
 			rigidbody.AddForce(transform.forward * StrafeForce);
-		} else if(Input.GetKey (KeyCode.DownArrow)) {
+		} else if(Input.GetKey (KeyCode.S)) {
 			rigidbody.AddForce(-transform.forward * StrafeForce);
 		}
 
-		if(Input.GetKey (KeyCode.RightArrow)) {
+		if(Input.GetKey (KeyCode.D)) {
 			rigidbody.AddForce(transform.right * LinearForce);
-		} else if(Input.GetKey (KeyCode.LeftArrow)) {
+		} else if(Input.GetKey (KeyCode.A)) {
 			rigidbody.AddForce(-transform.right * LinearForce);
 		}
 	}

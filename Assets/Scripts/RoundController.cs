@@ -11,13 +11,14 @@ public class RoundController : MonoBehaviour {
 	public Killable Player;
 
 	private float _t;
+	private bool _roundsComplete;
 
 	// Use this for initialization
 	void Start () {
 		foreach(Transform child in Lasers.transform) {
 			child.gameObject.SetActive(false);
 		}
-		StartCoroutine("ManageRounds");
+		StartCoroutine(ManageRounds());
 	}
 	
 	// Update is called once per frame
@@ -25,6 +26,11 @@ public class RoundController : MonoBehaviour {
 		if(!Player.Alive) {
 			display.text = "YOU ARE DEAD.\n[SPACE] TO RESTART.";
 			StopCoroutine("ManageRounds");
+			if(Input.GetKeyDown(KeyCode.Space)) {
+				Application.LoadLevel(0);
+			}
+		} else if(_roundsComplete) {
+			display.text = "YOU HAVE DEFEATED THE CAPTOR.\n[SPACE] TO RESTART.";
 			if(Input.GetKeyDown(KeyCode.Space)) {
 				Application.LoadLevel(0);
 			}
@@ -51,5 +57,6 @@ public class RoundController : MonoBehaviour {
 			c.enabled = true;
 			yield return new WaitForSeconds(c.Duration);
 		}
+		_roundsComplete = true;
 	}
 }

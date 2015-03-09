@@ -2,9 +2,9 @@
 using System.Collections;
 
 public class AircraftControl : MonoBehaviour {
-	public float YawTorque;
+	public float YawSpeed;
+	public float PitchSpeed;
 	public float RollTorque;
-	public float PitchTorque;
 	public float StrafeForce;
 	public float LinearForce;
 
@@ -26,10 +26,10 @@ public class AircraftControl : MonoBehaviour {
 		}
 
 //		rigidbody.AddTorque(transform.right * PitchTorque * Input.GetAxis("Mouse Y"));
-		transform.Rotate(Vector3.right, Input.GetAxis ("Mouse Y"), Space.Self);
+		transform.Rotate(Vector3.right, -Input.GetAxis ("Mouse Y") * PitchSpeed, Space.Self);
 
 //		rigidbody.AddTorque(-transform.up * YawTorque * Input.GetAxis("Mouse X"));
-		transform.Rotate(Vector3.up, Input.GetAxis ("Mouse X"), Space.Self);
+		transform.Rotate(Vector3.up, Input.GetAxis ("Mouse X") * YawSpeed, Space.Self);
 
 		if(Input.GetKey (KeyCode.W)) {
 			rigidbody.AddForce(transform.forward * StrafeForce);

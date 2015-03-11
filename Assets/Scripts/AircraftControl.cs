@@ -4,7 +4,8 @@ using System.Collections;
 public class AircraftControl : MonoBehaviour {
 	public float YawSpeed;
 	public float PitchSpeed;
-	public float RollTorque;
+//	public float RollTorque;
+	public float AscensionForce;
 	public float StrafeForce;
 	public float LinearForce;
 
@@ -20,9 +21,11 @@ public class AircraftControl : MonoBehaviour {
 
 	void FixedUpdate () {
 		if(Input.GetKey (KeyCode.Q)) {
-			rigidbody.AddTorque(transform.forward * RollTorque);
+//			rigidbody.AddTorque(transform.forward * RollTorque);
+			rigidbody.AddForce (-transform.up * AscensionForce);
 		} else if(Input.GetKey (KeyCode.E)) {
-			rigidbody.AddTorque(-transform.forward * RollTorque);
+//			rigidbody.AddTorque(-transform.forward * RollTorque);
+			rigidbody.AddForce(transform.up * AscensionForce);
 		}
 
 //		rigidbody.AddTorque(transform.right * PitchTorque * Input.GetAxis("Mouse Y"));

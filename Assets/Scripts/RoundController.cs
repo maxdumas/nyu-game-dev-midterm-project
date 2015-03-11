@@ -9,6 +9,7 @@ public class RoundController : MonoBehaviour {
 	public float SloMoTimeScale;
 	public Killable Player;
 	public MoveOnAxis LaserPrefab;
+	public TargetController Targets;
 
 	private float _t;
 	private MoveOnAxis _currentLaser;
@@ -16,7 +17,9 @@ public class RoundController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		StartCoroutine(ManageRounds());
+		StartCoroutine("ManageRounds");
+
+		Targets.OnAllTargetsHit += DestroyChamber;
 	}
 	
 	// Update is called once per frame
@@ -56,10 +59,14 @@ public class RoundController : MonoBehaviour {
 			_currentLaser.enabled = true;
 			yield return new WaitForSeconds(_currentLaser.Duration);
 		}
-		_roundsComplete = true;
 	}
 
 	Vector3 RandomPointOnSurface() {
 		return Random.onUnitSphere * this.collider.bounds.size.x + this.collider.bounds.center;
+	}
+
+	void DestroyChamber() {
+		StopCoroutine("ManageRounds");
+		_roundsComplete = true;
 	}
 }

@@ -21,7 +21,10 @@ public class Target : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) {
 		if(other.gameObject.CompareTag(HitterTag)) {
-			Instantiate(Explosion, transform.position, Quaternion.identity);
+			if(Explosion != null) {
+				ParticleSystem e = (ParticleSystem) Instantiate(Explosion, transform.position, Quaternion.identity);
+				e.gameObject.transform.parent = transform;
+			}
 			isHit = true;
 			OnTargetHit(other);
 		}

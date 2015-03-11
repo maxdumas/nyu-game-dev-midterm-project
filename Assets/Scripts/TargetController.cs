@@ -11,6 +11,8 @@ public class TargetController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		foreach(Transform child in transform) {
+			if(!child.gameObject.activeSelf) continue; // Skip disabled targets
+
 			++Targets;
 			var target = child.gameObject.GetComponent<Target>();
 			if(target != null) {

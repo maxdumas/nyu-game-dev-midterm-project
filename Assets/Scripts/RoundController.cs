@@ -5,11 +5,14 @@ using System.Collections;
 public class RoundController : MonoBehaviour {
 	public int ActiveLasers;
 	public float RoundWarmupTime;
-	public Text display;
 	public float SloMoTimeScale;
+	public float EjectionSpeed;
+    public Text Display;
 	public Killable Player;
 	public MoveOnAxis LaserPrefab;
-	public TargetController Targets;
+	public GameObject LaserContainer;
+	public TargetController TargetContainer;
+	public Target EscapeObject;
 
 	private float _t;
 	private MoveOnAxis _currentLaser;
@@ -17,33 +20,34 @@ public class RoundController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		StartCoroutine("ManageRounds");
+		TargetContainer.OnAllTargetsHit += CompleteLevel;
+		EscapeObject.OnTargetHit += Victory;
 
-		Targets.OnAllTargetsHit += DestroyChamber;
+		StartCoroutine("ManageRounds");
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(!Player.Alive) {
-			display.text = "YOU ARE DEAD.\n[SPACE] TO RESTART.";
+			Display.text = "YOU ARE DEAD.\n[SPACE] TO RESTART.";
 			StopCoroutine("ManageRounds");
 			if(Input.GetKeyDown(KeyCode.Space)) {
 				Application.LoadLevel(0);
 			}
 		} else if(_roundsComplete) {
-			display.text = "YOU HAVE DEFEATED THE CAPTOR.\n[SPACE] TO RESTART.";
+			Display.text = "YOU HAVE DEFEATED THE CAPTOR.\n[SPACE] TO RESTART.";
 			if(Input.GetKeyDown(KeyCode.Space)) {
 				Application.LoadLevel(0);
-			}
-		} else if(_t < RoundWarmupTime) {
-			display.text = string.Format("{0:F2}", RoundWarmupTime - _t + 1f).ToString();
+            }
+		}else if(_t < RoundWarmupTime) {
+			Display.text = string.Format("{0:F2}", RoundWarmupTime - _t + 1f).ToString();
 			_t += Time.deltaTime;
 			Time.timeScale = Mathf.SmoothStep(Time.timeScale, 1f, 0.125f);
 
 			if(_currentLaser != null) 
 				_currentLaser.transform.LookAt(Player.transform);
 		} else {
-			display.text = "GO!!!";
+			Display.text = "GO!!!";
 			Time.timeScale = Mathf.SmoothStep(Time.timeScale, SloMoTimeScale, 0.125f);
 		}
 
@@ -53,6 +57,7 @@ public class RoundController : MonoBehaviour {
 	IEnumerator ManageRounds() {
 		while(true) {
 			_currentLaser = (MoveOnAxis) Instantiate(LaserPrefab, RandomPointOnSurface(), Quaternion.identity);
+			_currentLaser.transform.parent = LaserContainer.transform;
 			++ActiveLasers;
 			_t = 0f;
 			yield return new WaitForSeconds(RoundWarmupTime);
@@ -65,8 +70,31 @@ public class RoundController : MonoBehaviour {
 		return Random.onUnitSphere * this.collider.bounds.size.x + this.collider.bounds.center;
 	}
 
-	void DestroyChamber() {
+	void CompleteLevel() {
 		StopCoroutine("ManageRounds");
+		LaserContainer.SetActive(false);
+		StartCoroutine(DestroyChamber());
+		StartCoroutine(CreateEscape());
+	}
+
+	IEnumerator DestroyChamber() {
+		while(true) {
+			foreach(Transform child in transform) {
+				child.position += child.position.normalized * Time.deltaTime * EjectionSpeed;
+			}
+			foreach(Transform child in TargetContainer.transform) {
+				child.position += child.position.normalized * Time.deltaTime * EjectionSpeed;
+			}
+			yield return new WaitForEndOfFrame();
+		}
+	}
+
+	IEnumerator CreateEscape() {
+		yield return new WaitForSeconds(1f);
+		EscapeObject.gameObject.SetActive(true);
+	}
+
+	void Victory(Collider other) {
 		_roundsComplete = true;
 	}
 }

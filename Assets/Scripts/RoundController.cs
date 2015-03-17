@@ -13,6 +13,7 @@ public class RoundController : MonoBehaviour {
 	public GameObject LaserContainer;
 	public TargetController TargetContainer;
 	public Target EscapeObject;
+	public GameObject DismantleObject;
 
 	private float _t;
 	private MoveOnAxis _currentLaser;
@@ -28,18 +29,7 @@ public class RoundController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(!Player.Alive) {
-			Display.text = "YOU ARE DEAD.\n[SPACE] TO RESTART.";
-			StopCoroutine("ManageRounds");
-			if(Input.GetKeyDown(KeyCode.Space)) {
-				Application.LoadLevel(0);
-			}
-		} else if(_roundsComplete) {
-			Display.text = "YOU HAVE DEFEATED THE CAPTOR.\n[SPACE] TO RESTART.";
-			if(Input.GetKeyDown(KeyCode.Space)) {
-				Application.LoadLevel(0);
-            }
-		}else if(_t < RoundWarmupTime) {
+		if(_t < RoundWarmupTime) {
 			Display.text = string.Format("{0:F2}", RoundWarmupTime - _t + 1f).ToString();
 			_t += Time.deltaTime;
 			Time.timeScale = Mathf.SmoothStep(Time.timeScale, 1f, 0.125f);
@@ -73,6 +63,7 @@ public class RoundController : MonoBehaviour {
 	void CompleteLevel() {
 		StopCoroutine("ManageRounds");
 		LaserContainer.SetActive(false);
+		DismantleObject.SetActive(true);
 		StartCoroutine(DestroyChamber());
 		StartCoroutine(CreateEscape());
 	}
@@ -95,6 +86,7 @@ public class RoundController : MonoBehaviour {
 	}
 
 	void Victory(Collider other) {
+		Application.LoadLevel("Win");
 		_roundsComplete = true;
 	}
 }
